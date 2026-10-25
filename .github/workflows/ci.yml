@@ -1,0 +1,28 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+    container: swift:5.10
+    steps:
+      - uses: actions/checkout@v4
+      - run: swift build -c release
+      - run: swift test
+      - name: Запуск CLI
+        run: |
+          B=$(swift build -c release --show-bin-path)
+          $B/rekvizit 7707083893 1027700132195 "112-233-445 95" 044525225
+          $B/rekvizit gen inn12 3
+          $B/rekvizit gen счёт 044525225 2
+          ! $B/rekvizit 7707083894
+
+  macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: swift test
